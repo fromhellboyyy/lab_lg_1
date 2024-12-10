@@ -122,3 +122,5 @@ def determinant(matrix):
 
 if f==1:
     print(det,'Да')
+else:
+    print('Нет')
