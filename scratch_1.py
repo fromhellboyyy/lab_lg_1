@@ -44,15 +44,13 @@ class Csr:
         element = 0
         for i in range(len(val)):
             if (col_ind[i] == col1) and (i >= row_ind[row1]) and (i < row_ind[row1 + 1]):
-                element += val[i]
-            else:
-                 element += 0
+                element = val[i]
         return element
     def mol(self, other):
-        if max(self.col_ind) != len(other.row_ptr) - 1:
+        if max(self.col_ind) + 1 != len(other.row_ptr) - 1:
             return "ошибка, матрицы не могут быть перемножены, потому что количсетво столбцов в первой матрице не равно количеству строк во второй"
         n = len(self.row_ptr) - 1  # Количество строк в первой матрице
-        m = len(other.col_ind)  # Количество столбцов во второй матрице
+        val = list(int())
         val = self.val
         col_ind = self.col_ind
         row_ptr = self.row_ptr
@@ -149,9 +147,10 @@ m = p.create_matrix()
 print(m)
 #d = Csr()
 #print(d.create_matrix())
+#print(p.mol(d))
 #print(p.add(d))
 #print(p.trace())
-#print(p.display_element(1,2))
+print(p.display_element(2,3))
 #print(p.determinant(Csr.csr_to_normal(0, m))[0])
 #print(p.determinant(Csr.csr_to_normal(0, m))[1])
 #print(p.mol_by_scalar(4))
