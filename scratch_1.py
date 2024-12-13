@@ -111,6 +111,8 @@ class Csr:
 
     def determinant(self, scrmatrix):
         matrix = Csr.csr_to_normal(self, scrmatrix)
+        if len(matrix)!=len(matrix[0]):
+            return "error, not a square matrix"
         n = len(matrix)
         if n == 1:
             if matrix[0][0] != 0:
@@ -160,15 +162,34 @@ class Csr:
 def test(x, y):
     return x == y
 p = Csr()
-m = p.create_matrix()
 d = Csr()
+m = p.create_matrix()
 n = d.create_matrix()
-print(m)
-#print(Csr.csr_to_normal(0, p.mol(d)))
-#print(p.add(d))
-#print(p.trace())
-#print(p.display_element(2,3))
-print(p.determinant(m)[0])
-#print(p.determinant(Csr.csr_to_normal(0, m))[1])
-#print(p.mol_by_scalar(4))
+print(test(m, [[1,2,3,4,5,6],[0,1,2,0,1,2],[0,3,6]]))
+print(test(p.trace(), "error, not a square matrix"))
+print(test(p.display_element(1, 2), 2))
+print(test(p.add(d), [[4,5,6,7,8,9],[0,1,2,0,1,2],[0,3,6]]))
+print(test(p.mol(d), "ошибка, матрицы не могут быть перемножены, потому что количсетво столбцов в первой матрице не равно количеству строк во второй"))
+print(test(p.determinant(m), "error, not a square matrix"))
+print(test(p.mol_by_scalar(6), [[6,12,18,24,30,36],[0,1,2,0,1,2],[0,3,6]]))
+
+m = p.create_matrix()
+n = d.create_matrix()
+print(test(m, ))
+print(test(p.trace(), ))
+print(test(p.display_element(1, 2), ))
+print(test(p.add(d), ))
+print(test(p.mol(d), ))
+print(test(p.determinant(m), ))
+print(test(p.mol_by_scalar(6), ))
+
+m = p.create_matrix()
+n = d.create_matrix()
+print(test(m, ))
+print(test(p.trace(), ))
+print(test(p.display_element(1, 2), ))
+print(test(p.add(d), ))
+print(test(p.mol(d), ))
+print(test(p.determinant(m), ))
+print(test(p.mol_by_scalar(6), ))
 
