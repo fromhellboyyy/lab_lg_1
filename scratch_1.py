@@ -9,7 +9,7 @@ class Csr:
         m = int(input())
         matrix = list()
         for iterations in range(n):
-            matrix += [list(map(int, input().split()))]
+            matrix += [list(map(float, input().split()))]
         for i in range(n):
             counter = 0
             for j in range(m):
@@ -50,27 +50,26 @@ class Csr:
         if max(self.col_ind) + 1 != len(other.row_ptr) - 1:
             return "ошибка, матрицы не могут быть перемножены, потому что количсетво столбцов в первой матрице не равно количеству строк во второй"
         n = len(self.row_ptr) - 1  # Количество строк в первой матрице
-        val = list(int())
-        val = self.val
-        col_ind = self.col_ind
-        row_ptr = self.row_ptr
+        val2 = self.val
+        col_ind2 = self.col_ind
+        row_ptr2 = self.row_ptr
         result_val = []
         result_col_ind = []
         result_row_ptr = [0]
         for i in range(n):
             row_result = {}
-            for j in range(row_ptr[i], row_ptr[i + 1]):
-                a_val = val[j]
-                a_col = col_ind[j]
+            for j in range(row_ptr2[i], row_ptr2[i + 1]):
+                a_val = val2[j]
+                a_col = col_ind2[j]
                 for k in range(other.row_ptr[a_col], other.row_ptr[a_col + 1]):
                     b_val = other.val[k]
                     b_row = other.col_ind[k]
                     if b_row not in row_result:
                         row_result[b_row] = 0
                     row_result[b_row] += a_val * b_val
-            for col_ind, val in row_result.items():
-                result_val.append(val)
-                result_col_ind.append(col_ind)
+            for col_ind3, val3 in row_result.items():
+                result_val.append(val3)
+                result_col_ind.append(col_ind3)
             result_row_ptr.append(len(result_val))
         return [result_val, result_col_ind, result_row_ptr]
 
@@ -145,12 +144,12 @@ class Csr:
 p = Csr()
 m = p.create_matrix()
 print(m)
-#d = Csr()
-#print(d.create_matrix())
-#print(p.mol(d))
+d = Csr()
+print(d.create_matrix())
+print(Csr.csr_to_normal(0, p.mol(d)))
 #print(p.add(d))
 #print(p.trace())
-print(p.display_element(2,3))
+#print(p.display_element(2,3))
 #print(p.determinant(Csr.csr_to_normal(0, m))[0])
 #print(p.determinant(Csr.csr_to_normal(0, m))[1])
 #print(p.mol_by_scalar(4))
