@@ -163,6 +163,15 @@ def test(x, y):
     return x == y
 p = Csr()
 d = Csr()
+#первый тест, входные данные:
+#2
+#3
+#1 2 3
+#4 5 6
+#2
+#3
+#3 3 3
+#3 3 3
 m = p.create_matrix()
 n = d.create_matrix()
 print(test(m, [[1,2,3,4,5,6],[0,1,2,0,1,2],[0,3,6]]))
