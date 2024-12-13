@@ -109,7 +109,8 @@ class Csr:
         return [[], [], []]
 
 
-    def determinant(self, matrix):
+    def determinant(self, scrmatrix):
+        matrix = Csr.csr_to_normal(self, scrmatrix)
         n = len(matrix)
         if n == 1:
             if matrix[0][0] != 0:
@@ -120,7 +121,21 @@ class Csr:
         det = 0
         for j in range(n):
             minor = [row[:j] + row[j + 1:] for row in matrix[1:]]  # Удаляем первую строку и j-й столбец
-            det += (-1) ** j * matrix[0][j] * Csr.determinant(0, minor)[0]  # Рекурсия для вычисления детерминанта
+            l = len(minor)
+            m = len(minor[0])
+            val4 = []
+            col_ind4 = []
+            row_ptr4 = [0]
+            for i in range(l):
+                counter = 0
+                for k in range(m):
+                    if minor[i][k] != 0:
+                        val4.append(minor[i][k])
+                        col_ind4.append(k)
+                        counter += 1
+                row_ptr4.append(row_ptr4[i] + counter)
+            csrminor = [val4, col_ind4, row_ptr4]
+            det += (-1) ** j * matrix[0][j] * Csr.determinant(0, csrminor)[0]  # Рекурсия для вычисления детерминанта
         if det != 0:
             inv_mt = 'Да'
         else:
@@ -128,6 +143,8 @@ class Csr:
         return [det, inv_mt]
 
     def csr_to_normal(self, csr_matrix):
+        if csr_matrix[0] == []:
+            return [[0]]
         col_ind = csr_matrix[1]
         row_ind = csr_matrix[2]
         matrix = [[0 for i in range(max(col_ind) + 1)] for j in range(len(row_ind) - 1)]
@@ -140,17 +157,18 @@ class Csr:
                     row = j
             matrix[row][col] = val[i]
         return matrix
-
+def test(x, y):
+    return x == y
 p = Csr()
 m = p.create_matrix()
-print(m)
 d = Csr()
-print(d.create_matrix())
-print(Csr.csr_to_normal(0, p.mol(d)))
+n = d.create_matrix()
+print(m)
+#print(Csr.csr_to_normal(0, p.mol(d)))
 #print(p.add(d))
 #print(p.trace())
 #print(p.display_element(2,3))
-#print(p.determinant(Csr.csr_to_normal(0, m))[0])
+print(p.determinant(m)[0])
 #print(p.determinant(Csr.csr_to_normal(0, m))[1])
 #print(p.mol_by_scalar(4))
 
