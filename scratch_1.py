@@ -18,10 +18,39 @@ class Csr:
                     self.col_ind.append(j)
                     counter += 1
             self.row_ptr.append(self.row_ptr[i] + counter)
-        return [self.val, self.col_ind, self.row_ptr]
+            val = self.val
+            col_ind = self.col_ind
+            row_ptr = self.row_ptr
+        return [val, col_ind, row_ptr]
 
+    def trace(self):
+        trace = 0
+        val = self.val
+        col_ind = self.col_ind
+        row_ind = self.row_ptr
+        if max(col_ind) + 1 != len(row_ind) - 1:
+            return "error, not a square matrix"
+        for i in range(len(val)):
+            if (i >= row_ind[col_ind[i]]) and (i < row_ind[col_ind[i] + 1]):
+                trace += val[i]
+        return trace
+
+    def display_element(self, row, col):
+        row1 = row - 1
+        col1 = col - 1
+        val = self.val
+        col_ind = self.col_ind
+        row_ind = self.row_ptr
+        element = 0
+        for i in range(len(val)):
+            if (col_ind[i] == col1) and (i >= row_ind[row1]) and (i < row_ind[row1 + 1]):
+                element += val[i]
+            else:
+                 element += 0
+        return element
     def mol(self, other):
-        assert max(self.col_ind) != len(other.row_ptr) - 1, "Невозможное умножение: количество столбцов первой матрицы должно быть равно количеству строк второй."
+        if max(self.col_ind) != len(other.row_ptr) - 1:
+            return "ошибка, матрицы не могут быть перемножены, потому что количсетво столбцов в первой матрице не равно количеству строк во второй"
         n = len(self.row_ptr) - 1  # Количество строк в первой матрице
         m = len(other.col_ind)  # Количество столбцов во второй матрице
         val = self.val
@@ -49,29 +78,29 @@ class Csr:
 
     def add(self, other):
         if (len(self.row_ptr) != len(other.row_ptr)) or (max(self.col_ind) != max(other.col_ind)):
-            raise ValueError("Матрицы должны иметь одинаковое число строк.")
+            return "Матрицы должны иметь одинаковое число строк"
         result_val = []
         result_col_ind = []
         result_row_ptr = [0]
-        i = 0
-        j = 0
-        while i < len(self.val) or j < len(other.val):
-            if i < len(self.val) and (j == len(other.val) or self.col_ind[i] <= other.col_ind[j]):
-                result_val.append(self.val[i])
-                result_col_ind.append(self.col_ind[i])
-                i += 1
-            if j < len(other.val) and (i == len(self.val) or other.col_ind[j] < self.col_ind[i]):
-                result_val.append(other.val[j])
-                result_col_ind.append(other.col_ind[j])
-                j += 1
-            if i < len(self.val) and j < len(other.val) and self.col_ind[i] == other.col_ind[j]:
-                result_val.append(self.val[i] + other.val[j])
-                result_col_ind.append(self.col_ind[i])
-                i += 1
-                j += 1
-            if i == self.row_ptr[len(result_row_ptr) - 1]:
-                result_row_ptr.append(len(result_val))
+        val1 = self.val
+        col_ind1 = self.col_ind
+        row_ptr1 = self.row_ptr
+        val2 = other.val
+        col_ind2 = other.col_ind
+        row_ptr2 = other.row_ptr
+        matrix1 = Csr.csr_to_normal(self, [val1, col_ind1, row_ptr1])
+        matrix2 = Csr.csr_to_normal(self, [val2, col_ind2, row_ptr2])
+        resmatrix = [[(matrix1[i][j]+matrix2[i][j]) for j in range(max(col_ind1)+1)] for i in range(len(row_ptr1) - 1)]
+        for i in range(len(row_ptr1) - 1):
+            counter = 0
+            for j in range(max(col_ind1)+1):
+                if resmatrix[i][j] != 0:
+                    result_val.append(resmatrix[i][j])
+                    result_col_ind.append(j)
+                    counter += 1
+            result_row_ptr.append(result_row_ptr[i] + counter)
         return [result_val, result_col_ind, result_row_ptr]
+
 
     def mol_by_scalar(self, scalar):
         matrix_val = self.val
@@ -84,6 +113,10 @@ class Csr:
 
 
     def determinant(self, matrix):
+        """
+
+        :rtype: int
+        """
         n = len(matrix)
         if n == 1:
             if matrix[0][0] != 0:
@@ -97,10 +130,12 @@ class Csr:
             det += (-1) ** j * matrix[0][j] * Csr.determinant(self, minor)  # Рекурсия для вычисления детерминанта
 
     def csr_to_normal(self, csr_matrix):
+        """
+
+        :rtype: list[list[int]]
+        """
         col_ind = csr_matrix[1]
         row_ind = csr_matrix[2]
-        print(max(col_ind))
-        print(len(row_ind))
         matrix = [[0 for i in range(max(col_ind) + 1)] for j in range(len(row_ind) - 1)]
         val = csr_matrix[0]
         for i in range(len(val)):
@@ -111,8 +146,15 @@ class Csr:
                     row = j
             matrix[row][col] = val[i]
         return matrix
+
 p = Csr()
-print(p.create_matrix())
-d = Csr()
-print(d.create_matrix())
-print(p.add(d))
+m = p.create_matrix()
+print(m)
+#d = Csr()
+#print(d.create_matrix())
+#print(p.add(d))
+#print(p.trace())
+#print(p.display_element(1,2))
+print(p.determinant(Csr.csr_to_normal(0, m)))
+#print(p.mol_by_scalar(4))
+
