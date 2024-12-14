@@ -5,6 +5,9 @@ class Csr:
         self.row_ptr = [0]
 
     def create_matrix(self):
+        self.val = []
+        self.col_ind = []
+        self.row_ptr = [0]
         n = int(input())
         m = int(input())
         matrix = list()
@@ -67,15 +70,16 @@ class Csr:
                     if b_row not in row_result:
                         row_result[b_row] = 0
                     row_result[b_row] += a_val * b_val
-            for col_ind3, val3 in row_result.items():
-                result_val.append(val3)
-                result_col_ind.append(col_ind3)
+
+            for cort in sorted(row_result.items()):
+                result_val = result_val + [cort[1]]
+                result_col_ind = result_col_ind + [cort[0]]
             result_row_ptr.append(len(result_val))
         return [result_val, result_col_ind, result_row_ptr]
 
     def add(self, other):
         if (len(self.row_ptr) != len(other.row_ptr)) or (max(self.col_ind) != max(other.col_ind)):
-            return "Матрицы должны иметь одинаковое число строк"
+            return "Матрицы должны иметь одинаковое число строк и столбцов"
         result_val = []
         result_col_ind = []
         result_row_ptr = [0]
@@ -181,24 +185,43 @@ print(test(p.add(d), [[4,5,6,7,8,9],[0,1,2,0,1,2],[0,3,6]]))
 print(test(p.mol(d), "ошибка, матрицы не могут быть перемножены, потому что количсетво столбцов в первой матрице не равно количеству строк во второй"))
 print(test(p.determinant(m), "error, not a square matrix"))
 print(test(p.mol_by_scalar(6), [[6,12,18,24,30,36],[0,1,2,0,1,2],[0,3,6]]))
-
+#второй тест, входные данные:
+#3
+#2
+#1 0
+#4 2
+#0 2
+#2
+#1
+#5
+#3
 m = p.create_matrix()
 n = d.create_matrix()
-print(test(m, ))
-print(test(p.trace(), ))
-print(test(p.display_element(1, 2), ))
-print(test(p.add(d), ))
-print(test(p.mol(d), ))
-print(test(p.determinant(m), ))
-print(test(p.mol_by_scalar(6), ))
-
+print(test(m, [[1,4,2,2],[0,0,1,1],[0,1,3,4]]))
+print(test(p.trace(), "error, not a square matrix"))
+print(test(p.display_element(1, 2), 0))
+print(test(p.add(d), "Матрицы должны иметь одинаковое число строк и столбцов"))
+print(test(p.mol(d), [[5,26,6],[0,0,0],[0,1,2,3]]))
+print(test(p.determinant(m), "error, not a square matrix"))
+print(test(p.mol_by_scalar(3), [[3,12,6,6],[0,0,1,1],[0,1,3,4]]))
+#третий тест, входные данные:
+#3
+#3
+#1 2 2
+#4 0 2
+#1 2 0
+#3
+#3
+#0 0 1
+#1 0 0
+#0 1 0
 m = p.create_matrix()
 n = d.create_matrix()
-print(test(m, ))
-print(test(p.trace(), ))
-print(test(p.display_element(1, 2), ))
-print(test(p.add(d), ))
-print(test(p.mol(d), ))
-print(test(p.determinant(m), ))
-print(test(p.mol_by_scalar(6), ))
+print(test(m, [[1,2,2,4,2,1,2], [0,1,2,0,2,0,1],[0,3,5,7]]))
+print(test(p.trace(), 1))
+print(test(p.display_element(2, 2), 0))
+print(test(p.add(d), [[1,2,3,5,2,1,3],[0,1,2,0,2,0,1],[0,3,5,7]]))
+print(test(p.mol(d), [[2,2,1,2,4,2,1],[0,1,2,1,2,0,2],[0,3,5,7]]))
+print(test(p.determinant(m), [16, "Да"]))
+print(test(p.mol_by_scalar(0), [[],[],[]]))
 
